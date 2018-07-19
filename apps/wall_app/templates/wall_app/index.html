@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+        crossorigin="anonymous">
+    <title>The Wall</title>
+    <style>
+        .message_box {
+            margin-top: 25px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+            text-align: center;
+        }
+
+        .message_input {
+            height: 200px;
+            width: 80%;
+
+        }
+
+        .message_submit {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
+
+        #message {
+            text-align: left;
+            font-size: 18px;
+        }
+
+        #comment {
+            margin-left: 30px;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        .navbar-brand {
+            font-size: 40px;
+        }
+
+        .navbar-text {
+            margin-right: 20px;
+        }
+
+        h2 {
+            margin-top: 10px;
+            margin-left: 20px;
+        }
+
+        h6 {
+            width: 400px;
+            margin-left: 50px;
+            margin-right: 0px;
+            font-weight: bolder;
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        .messages {
+            width: 80%;
+            margin-left: 100px;
+            margin-right: 10%;
+            margin-top: 0px;
+        }
+
+        .btn-success {
+            height: 20px;
+            font-size: 12px;
+            padding: 5px;
+            padding-left: 4px;
+            padding-right: 5px;
+            padding-top: 1px;
+            margin-left: 75%;
+            margin-top:5px;
+            width: 100px;
+        }
+
+        .comment_text {
+            margin-top: 5px;
+            height: 40px;
+            padding: 5px;
+            margin-left: 160px;
+            margin-right: auto;
+            width: 70%;
+        }
+
+        .comment_creator {
+            width: 400px;
+            margin-left: 135px;
+            margin-right: 0px;
+            margin-top: 15px;
+            margin-bottom: 2px;
+            font-weight: bold;
+        }
+
+        .comment_content {
+            margin-top: 0px;
+            height: 40px;
+            padding: 5px;
+            margin-left: 160px;
+            margin-right: 10%;
+            width: 85%;
+            padding: 0px;
+        }
+
+        #delete {
+            height: 15px;
+            width: 80px;
+            font-size: 10px;
+            padding: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR HEADING -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <h1>
+            <a class="navbar-brand" href="/index">Coding Dojo Wall</a>
+        </h1>
+        <span class="navbar-text">
+            Welcome, {{user.first_name}}
+        </span>
+        <div class="" id="navbarSupportedContent">
+
+            <form action='/' class="form-inline my-2 my-lg-0">
+                {% csrf_token %}
+                <input class="btn btn-outline-danger my-2 my-sm-0" type="submit" value="Log Out">
+            </form>
+        </div>
+    </nav>
+    <!-- END NAVBAR -->
+
+    <!-- OPTION TO ADD MESSAGE -->
+    <div class="message_box">
+        <form action="/create_message" method="POST">
+            {% csrf_token %}
+            <h3>Create a Post</h3>
+            <input class="message_input" type="text" name="message">
+            <input class="message_submit btn btn-info" type="submit" value="Share Post">
+        </form>
+    </div>
+    <!-- END OPTION TO ADD MESSAGE -->
+
+    <h2>Posts</h2>
+    {% for message in messages reversed%}
+    <h6>{{message.user.first_name}} {{message.user.last_name}} - {{message.created_at}}
+        <form action='/delete/{{message.id}}'>
+            <input type="submit" id="delete" class="btn btn-danger" value="delete post">
+        </form>
+    </h6>
+    <div class="messages">
+        {{ message.content }}
+    </div>
+    {% for comment in message.comments.all %}
+    <p class="comment_creator">{{comment.user.first_name}} {{comment.user.last_name}} - {{comment.created_at}}</p>
+    <div class="comment_content">
+        {{comment.content}}
+    </div>
+    {% endfor %}
+    <form action="/create_comment" method="POST">
+        {% csrf_token %}
+        <input class="comment_text" type="text" name="comment">
+        <input type="hidden" name="post_id" value={{message.id}}>
+        <input class="btn btn-success" type="submit" value="Post Comment">
+    </form>
+    {% endfor %}
+
+
+</body>
+
+</html>
